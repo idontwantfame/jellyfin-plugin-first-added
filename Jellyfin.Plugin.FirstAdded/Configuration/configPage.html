@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html><head><title>First Added</title></head><body>
+<div id="FirstAddedConfigPage" data-role="page" class="page type-interior pluginConfigurationPage">
+<div data-role="content"><div class="content-primary">
+<h2>First Added</h2>
+<p>Preserve movie and episode date-added timestamps when files are replaced or upgraded.</p>
+<p>Select libraries and save, then initialize to record their current Jellyfin dates. Enable preservation and save to protect future imports and upgrades. Dates lost before initialization cannot be recovered automatically.</p>
+<form id="FirstAddedForm">
+<label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="Enabled"><span>Enable preservation</span></label>
+<label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="IncludeMovies"><span>Movies</span></label>
+<label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="IncludeEpisodes"><span>Episodes</span></label>
+<label class="checkboxContainer"><input is="emby-checkbox" type="checkbox" id="RespectManualDateEdits"><span>Use manually edited dates as the new baseline</span></label>
+<h3>Libraries</h3><div id="FirstAddedLibraries"></div>
+<p>Newly selected libraries and item types need initialization before preservation starts. Metadata locks are respected. Provider IDs identify titles across file replacements; unmatched or conflicting identities are skipped.</p>
+<button is="emby-button" type="submit" class="raised button-submit block"><span>Save settings</span></button>
+</form>
+<h3>Dates and recovery</h3>
+<p id="FirstAddedStatus" role="status"></p>
+<button is="emby-button" type="button" class="raised" data-action="Initialize">Initialize selected libraries</button>
+<button is="emby-button" type="button" class="raised" data-action="Preview">Preview</button>
+<button is="emby-button" type="button" class="raised" data-action="Reconcile">Preserve dates now</button>
+<button is="emby-button" type="button" class="raised" data-action="Rollback">Roll back date changes</button>
+<p>Rollback revokes initialization for all libraries and restores backed-up dates still owned by this plugin. Locked items and subsequent manual changes are skipped. Failed restores can be retried. Initialize again only when you intend to resume preservation.</p>
+<pre id="FirstAddedResults" style="white-space:pre-wrap;overflow-wrap:anywhere" aria-live="polite"></pre>
+</div></div>
+<script>
+(function () {
+    'use strict';
+    var id = 'c7d4af3e-1b9d-4f06-b0c8-cce9bc55ac91';
+    var page = document.querySelector('#FirstAddedConfigPage');
+    var fields = ['Enabled', 'IncludeMovies', 'IncludeEpisodes', 'RespectManualDateEdits'];
+    var config;
+    var busy = false;
+    function request(action) {
+        return ApiClient.ajax({type: action === 'Status' || action === 'Preview' ? 'GET' : 'POST',
+            url: ApiClient.getUrl('FirstAdded/' + action), dataType: 'json'});
+    }
+    function normalized(value) { return value.replace(/-/g, '').toLowerCase(); }
+    function status() {
+        return request('Status').then(function (data) {
+            page.querySelector('#FirstAddedStatus').textContent = data.Records + ' recorded titles; '
+                + data.Backups + ' date backups; ' + data.InitializedScopes.length + ' initialized scopes; '
+                + data.PendingWrites + ' pending writes/restores.';
+            return data;
+        });
+    }
+    function load() {
+        return ApiClient.getPluginConfiguration(id).then(function (value) {
+            config = value;
+            fields.forEach(function (name) { page.querySelector('#' + name).checked = !!value[name]; });
+            return status();
+        }).then(function (data) {
+            var container = page.querySelector('#FirstAddedLibraries');
+            container.textContent = '';
+            data.Libraries.forEach(function (library) {
+                var label = document.createElement('label'); label.className = 'checkboxContainer';
+                var checkbox = document.createElement('input'); checkbox.type = 'checkbox';
+                checkbox.setAttribute('is', 'emby-checkbox'); checkbox.dataset.library = normalized(library.Id);
+                checkbox.checked = (config.LibraryIds || []).indexOf(normalized(library.Id)) !== -1;
+                var text = document.createElement('span'); text.textContent = library.Name;
+                label.appendChild(checkbox); label.appendChild(text); container.appendChild(label);
+            });
+        });
+    }
+    function run(operation) {
+        if (busy) return;
+        busy = true; Dashboard.showLoadingMsg();
+        Promise.resolve().then(operation).catch(function () {
+            Dashboard.alert('First Added could not finish. Check the Jellyfin log. Pending recovery entries are retained.');
+        }).finally(function () { busy = false; Dashboard.hideLoadingMsg(); });
+    }
+    page.addEventListener('pageshow', function () { run(load); });
+    page.querySelector('form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        run(function () {
+            fields.forEach(function (name) { config[name] = page.querySelector('#' + name).checked; });
+            config.LibraryIds = Array.from(page.querySelectorAll('[data-library]:checked')).map(function (input) { return input.dataset.library; });
+            return ApiClient.updatePluginConfiguration(id, config).then(function () {
+                Dashboard.alert('Settings saved. Newly selected scopes need initialization.'); return status();
+            });
+        });
+    });
+    page.querySelectorAll('[data-action]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var action = button.dataset.action;
+            if (action === 'Initialize' && !window.confirm('Record current Jellyfin dates for the saved library selection? This does not recover dates lost before setup.')) return;
+            if (action === 'Rollback' && !window.confirm('Revoke all initialized scopes and restore dates still owned by First Added?')) return;
+            run(function () {
+                return request(action).then(function (result) {
+                    var output = page.querySelector('#FirstAddedResults');
+                    if (action === 'Preview') {
+                        output.textContent = result.map(function (row) {
+                            return row.Action + ': ' + row.Name + ' | ' + row.CurrentDateUtc + ' → ' + (row.FirstAddedUtc || '(new title)');
+                        }).join('\n') || 'No eligible items in the saved library selection.';
+                    } else output.textContent = 'Recorded: ' + result.Recorded + '; restored: ' + result.Restored + '; skipped/unchanged: ' + result.Skipped + '.';
+                    return status();
+                });
+            });
+        });
+    });
+})();
+</script></div></body></html>
