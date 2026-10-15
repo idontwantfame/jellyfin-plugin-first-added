@@ -2,7 +2,13 @@
 
 Preserve the original date a movie or episode entered your library when a quality upgrade replaces its file. A genuinely new title keeps its current date. No Sonarr or Radarr connection or credentials are needed.
 
-Early local version: **0.1.0.0**, targeting **Jellyfin 12 / .NET 10**. Built against Jellyfin 12.0.0 APIs. Automated tests use the actual Jellyfin assemblies with a simulated repository; live-server behavior still needs deployment verification.
+Version **0.1.0.0**, targeting **Jellyfin 12 / .NET 10**. Built against Jellyfin 12.0.0 APIs and verified on Jellyfin 12.2.0. Automated tests cover replacement matching, manual edits, locks, durable journals, rollback and event delivery using actual Jellyfin assemblies with a simulated repository.
+
+Download a ZIP from [Releases](https://github.com/idontwantfame/jellyfin-plugin-first-added/releases). To install through Jellyfin, add this plugin repository URL under Dashboard → Plugins → Repositories, then install First Added from the catalogue and restart:
+
+```text
+https://raw.githubusercontent.com/idontwantfame/jellyfin-plugin-first-added/main/manifest.json
+```
 
 ## Setup
 
@@ -43,10 +49,13 @@ Prerequisite: .NET 10 SDK. No additional testing framework is required.
 ```sh
 dotnet build Jellyfin.Plugin.FirstAdded.Tests -c Release --warnaserror
 dotnet run --project Jellyfin.Plugin.FirstAdded.Tests -c Release --no-build
+python3 -m unittest discover -s tests
 python3 scripts/package.py
 ```
 
-The ZIP and SHA-256/MD5 checksums are written to `dist/`. Only the plugin DLL and license are included; debug symbols and machine-specific build outputs are excluded. Source paths are mapped to a neutral path when compiling. The CI workflow builds, runs safety tests and uploads the package as an artifact without publishing a release.
+The ZIP, SHA-256/MD5 checksums, release metadata and catalogue entry are written to `dist/`. Only the plugin DLL and license are included in the ZIP; debug symbols and machine-specific build outputs are excluded. Source paths are mapped to a neutral path when compiling. The CI workflow builds, runs safety tests and uploads the package as an artifact without publishing a release.
+
+For a fork, pass `--repository owner/repository` when packaging. Publish the ZIP and checksums under the matching four-part version tag, then copy `dist/manifest.json` into the repository root only after the download exists and its checksum has been verified. Do not replace the assets of an existing version with different bytes.
 
 ## License
 
