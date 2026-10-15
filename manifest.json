@@ -1,0 +1,21 @@
+[
+  {
+    "guid": "c7d4af3e-1b9d-4f06-b0c8-cce9bc55ac91",
+    "name": "First Added",
+    "description": "Preserve original date-added timestamps across movie and episode file replacements.",
+    "overview": "Preserve original date-added timestamps",
+    "owner": "idontwantfame",
+    "category": "Metadata",
+    "imageUrl": "",
+    "versions": [
+      {
+        "version": "0.1.0.0",
+        "changelog": "Record and preserve first-added dates for movie and episode upgrades, with library selection, preview, manual-edit protection and recovery rollback.",
+        "targetAbi": "12.0.0.0",
+        "timestamp": "2026-10-15T00:00:00Z",
+        "sourceUrl": "https://github.com/idontwantfame/jellyfin-plugin-first-added/releases/download/v0.1.0.0/first-added_0.1.0.0.zip",
+        "checksum": "fbd06ba2c6916224a481ebd4f6ed3ad8"
+      }
+    ]
+  }
+]
