@@ -34,7 +34,7 @@ class PackageTests(unittest.TestCase):
 
     def test_archive_and_catalogue_match(self):
         self.assertEqual(self.run_package().returncode, 0)
-        archive = self.root / "dist/first-added_0.1.0.0.zip"
+        archive = self.root / "dist/first-added_0.1.1.0.zip"
         payload = archive.read_bytes()
         with zipfile.ZipFile(archive) as package:
             self.assertEqual(sorted(package.namelist()), ["Jellyfin.Plugin.FirstAdded.dll", "LICENSE"])
@@ -44,11 +44,12 @@ class PackageTests(unittest.TestCase):
             self.assertEqual(digest, hashlib.new(algorithm, payload).hexdigest())
         catalogue = json.loads((self.root / "dist/manifest.json").read_text())
         self.assertEqual(catalogue[0]["owner"], "example")
+        self.assertEqual(catalogue[0]["imageUrl"], "https://raw.githubusercontent.com/example/plugin/main/assets/logo.png")
         self.assertEqual(catalogue[0]["guid"], "c7d4af3e-1b9d-4f06-b0c8-cce9bc55ac91")
         entry = catalogue[0]["versions"][0]
         self.assertEqual(entry["checksum"], hashlib.md5(payload).hexdigest())
         self.assertEqual(entry["targetAbi"], "12.0.0.0")
-        self.assertEqual(entry["sourceUrl"], "https://github.com/example/plugin/releases/download/v0.1.0.0/" + archive.name)
+        self.assertEqual(entry["sourceUrl"], "https://github.com/example/plugin/releases/download/v0.1.1.0/" + archive.name)
 
     def test_private_build_path_is_rejected(self):
         dll = self.root / "Jellyfin.Plugin.FirstAdded/bin/Release/net10.0/Jellyfin.Plugin.FirstAdded.dll"

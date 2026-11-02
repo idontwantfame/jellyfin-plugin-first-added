@@ -1,0 +1,12 @@
+Generated using the built-in image_gen tool.
+
+Use case: logo-brand
+Asset type: square plugin logo for the First Added Jellyfin plugin, used in a plugin catalogue and repository README.
+Primary request: Design one polished, distinctive, minimal logo representing a media library title keeping its original date added even when its file is upgraded.
+Subject: A bold rounded calendar outline with two short binding tabs, a clear large numeral "1" in its centre, and a small circular badge containing a right-pointing media play triangle overlapping the calendar at its lower-right corner. Balance these elements as one cohesive compact mark. The numeral 1 is the focal point; the play badge is secondary.
+Style/medium: Precise flat vector-style brand artwork with smooth simple geometry, consistent substantial line weights, restrained cyan-to-violet gradient on the calendar and numeral, crisp edges, high contrast, no photorealism, no dimensional mockup.
+Scene/backdrop: Solid very dark navy #101522 square canvas, completely opaque. The circular badge has a dark navy fill, a cyan outline, and a white play triangle.
+Composition/framing: One centred symbol only, filling roughly 70 percent of the canvas, with generous consistent empty margins. Readable at 64 pixels. Square 1024 by 1024 output.
+Color palette: Luminous cyan #00BCEB through violet #AA5CC3, white accents, dark navy background, inspired by the Jellyfin ecosystem.
+Text (verbatim): "1" only. No wordmark, no other letters or words.
+Constraints: Deliver a single finished logo, no contact sheet, no presentation frame, no watermark, no drop shadows, no glow, no fine detail, no official Jellyfin triangle logo.

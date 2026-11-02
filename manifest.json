@@ -6,7 +6,7 @@
     "overview": "Preserve original date-added timestamps",
     "owner": "idontwantfame",
     "category": "Metadata",
-    "imageUrl": "",
+    "imageUrl": "https://raw.githubusercontent.com/idontwantfame/jellyfin-plugin-first-added/main/assets/logo.png",
     "versions": [
       {
         "version": "0.1.0.0",

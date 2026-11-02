@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1.0
+
+- Add the First Added calendar and play logo to the README and plugin catalogue.
+- Keep catalogue image URLs correct when packaging forked repositories.
+- Publish tested release packages automatically from annotated version tags.
+
 ## 0.1.0.0
 
 - Record and preserve movie/episode first-added dates across file replacements.

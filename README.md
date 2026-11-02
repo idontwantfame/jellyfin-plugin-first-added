@@ -1,8 +1,10 @@
+<img src="assets/logo.png" alt="First Added logo: a calendar marked 1 with a play badge" width="160" height="160">
+
 # First Added for Jellyfin
 
 Preserve the original date a movie or episode entered your library when a quality upgrade replaces its file. A genuinely new title keeps its current date. No Sonarr or Radarr connection or credentials are needed.
 
-Version **0.1.0.0**, targeting **Jellyfin 12 / .NET 10**. Built against Jellyfin 12.0.0 APIs and verified on Jellyfin 12.2.0. Automated tests cover replacement matching, manual edits, locks, durable journals, rollback and event delivery using actual Jellyfin assemblies with a simulated repository.
+Version **0.1.1.0**, targeting **Jellyfin 12 / .NET 10**. Built against Jellyfin 12.0.0 APIs and verified on Jellyfin 12.2.0. Automated tests cover replacement matching, manual edits, locks, durable journals, rollback and event delivery using actual Jellyfin assemblies with a simulated repository.
 
 Download a ZIP from [Releases](https://github.com/idontwantfame/jellyfin-plugin-first-added/releases). To install through Jellyfin, add this plugin repository URL under Dashboard → Plugins → Repositories, then install First Added from the catalogue and restart:
 
@@ -53,7 +55,7 @@ python3 -m unittest discover -s tests
 python3 scripts/package.py
 ```
 
-The ZIP, SHA-256/MD5 checksums, release metadata and catalogue entry are written to `dist/`. Only the plugin DLL and license are included in the ZIP; debug symbols and machine-specific build outputs are excluded. Source paths are mapped to a neutral path when compiling. The CI workflow builds, runs safety tests and uploads the package as an artifact without publishing a release.
+The ZIP, SHA-256/MD5 checksums, release metadata and catalogue entry are written to `dist/`. Only the plugin DLL and license are included in the ZIP; debug symbols and machine-specific build outputs are excluded. Source paths are mapped to a neutral path when compiling. The build workflow runs safety tests and uploads the package as an artifact. Pushing a four-part version tag such as `v0.1.1.0` runs the release workflow, which repeats those checks and publishes the ZIP, checksums and catalogue metadata to GitHub Releases using the annotated tag as release notes.
 
 For a fork, pass `--repository owner/repository` when packaging. Publish the ZIP and checksums under the matching four-part version tag, then copy `dist/manifest.json` into the repository root only after the download exists and its checksum has been verified. Do not replace the assets of an existing version with different bytes.
 

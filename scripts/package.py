@@ -45,15 +45,15 @@ metadata = {
     "owner": repository.split("/")[0],
     "targetAbi": "12.0.0.0",
     "version": version,
-    "changelog": "Record and preserve first-added dates for movie and episode upgrades, with library selection, preview, manual-edit protection and recovery rollback.",
-    "timestamp": "2026-10-15T00:00:00Z",
+    "changelog": "Add the First Added logo to the README and plugin catalogue, including catalogue images for forked repositories.",
+    "timestamp": "2026-11-02T00:00:00Z",
 }
 (output / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
 entry = {key: metadata[key] for key in ("version", "changelog", "targetAbi", "timestamp")}
 entry["sourceUrl"] = f"https://github.com/{repository}/releases/download/v{version}/{archive.name}"
 entry["checksum"] = hashlib.md5(archive.read_bytes()).hexdigest()
 manifest = {key: metadata[key] for key in ("guid", "name", "description", "overview", "owner", "category")}
-manifest["imageUrl"] = ""
+manifest["imageUrl"] = f"https://raw.githubusercontent.com/{repository}/main/assets/logo.png"
 manifest["versions"] = [entry]
 (output / "manifest.json").write_text(json.dumps([manifest], indent=2) + "\n", encoding="utf-8")
 print(archive.name)
